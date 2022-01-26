@@ -1,0 +1,50 @@
+name: Pack and publish package to GitHub packages
+
+on: 
+  workflow_call:
+    inputs:
+      version:
+        desccription: verison to be set on the nuget package
+        type: string
+        required: true
+        default: 1.0.0
+      
+      nuget-source:
+        desccription: nuget registry source
+        type: string
+        required: true
+              
+      nuget-package_output_directory:
+        desccription: output folder to publish the packed library
+        type: string
+        required: true
+        
+    secrets:
+      nuget-auth:
+        desccription: GitHub PAT token
+        required: true
+      
+      nuget-username:
+        description: GitHub username
+        required: true
+       
+jobs:
+  pack-and-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Add to Nuget Registry Source
+        run: dotnet nuget add source --username ${{ secrets.nuget-username }} --password ${{ secrets.nuget-auth }} --store-password-in-clear-text --name github ${{ inputs.nuget-source }}
+
+      - name: Pack
+        run: dotnet pack --configuration Release --no-restore --include-symbols -p:PackageVersion=${{ inputs.version }} --output ${{ inputs.nuget-package_output_directory }}
+
+      - name: Publish Package
+        run: dotnet nuget push ${{ inputs.nuget-package_output_directory }}/*.nupkg  --api-key ${{ secrets.NUGETAUTH }} --source "github" --skip-duplicate
+      
+    
+       
+      
+      
