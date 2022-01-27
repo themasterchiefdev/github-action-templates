@@ -19,6 +19,12 @@ on:
         type: string
         required: true
         
+      dotnet-version:
+        description: Version of dotnet to use
+        type: string
+        required: false
+        default: 6.0.x
+        
     secrets:
       nuget-auth:
         description: GitHub PAT token
@@ -27,6 +33,8 @@ on:
       nuget-username:
         description: GitHub username
         required: true
+        
+        
        
 jobs:
   pack-and-publish:
