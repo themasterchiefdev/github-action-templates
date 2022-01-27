@@ -34,10 +34,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Restore packages
-      - run: dotnet restore
-      
+
       - name: Add to Nuget Registry Source
         run: dotnet nuget add source --username ${{ secrets.nuget-username }} --password ${{ secrets.nuget-auth }} --store-password-in-clear-text --name github ${{ inputs.nuget-source }}
 
