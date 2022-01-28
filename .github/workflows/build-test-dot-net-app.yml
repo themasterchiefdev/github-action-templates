@@ -13,6 +13,25 @@ on:
         description: The folder containing the project to build
         type: string
         default: .
+        
+      restore-from-private-nuget:
+        description: Restore from private nuget packages
+        type: boolean
+        default: false
+        
+      nuget-source:
+        description: nuget registry source
+        type: string
+        required: true
+        
+    secrets:
+      nuget-auth:
+        description: GitHub PAT token
+        required: false
+      
+      nuget-username:
+        description: GitHub username
+        required: false
 
 jobs:
   build-solution:
@@ -27,7 +46,11 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
-
+      
+      - name: Add private Nuget package source
+        if: ${{inputs.restore-from-private-nuget}}
+        run: dotnet nuget add source --username ${{ secrets.nuget-username }} --password ${{ secrets.nuget-auth }} --store-password-in-clear-text --name github ${{ inputs.nuget-source }}
+        
       - name: Restore dependencies
         run: dotnet restore
 
