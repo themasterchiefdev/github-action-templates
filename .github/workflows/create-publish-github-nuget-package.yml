@@ -25,6 +25,11 @@ on:
         required: false
         default: 6.0.x
         
+      project-folder:
+        description: The folder containing the project to build
+        type: string
+        default: .
+        
     secrets:
       nuget-auth:
         description: GitHub PAT token
@@ -39,7 +44,9 @@ on:
 jobs:
   pack-and-publish:
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: ${{ inputs.project-folder }}
     steps:
       - uses: actions/checkout@v2
 
