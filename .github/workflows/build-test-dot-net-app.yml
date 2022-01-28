@@ -8,11 +8,18 @@ on:
         type: string
         required: false
         default: 6.0.x
+        
+      project-folder:
+        description: The folder containing the project to build
+        type: string
+        default: .
 
 jobs:
   build-solution:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ${{ inputs.project-folder }}
     steps:
       - uses: actions/checkout@v2
 
