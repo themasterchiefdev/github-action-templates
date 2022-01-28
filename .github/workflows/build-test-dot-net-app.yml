@@ -22,7 +22,7 @@ on:
       nuget-source:
         description: nuget registry source
         type: string
-        required: true
+        required: false
         
     secrets:
       nuget-auth:
