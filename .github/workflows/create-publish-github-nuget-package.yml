@@ -64,7 +64,7 @@ jobs:
         run: dotnet pack --configuration Release --no-restore --include-symbols -p:PackageVersion=${{ inputs.version }} --output ${{ inputs.nuget-package_output_directory }}
 
       - name: Publish Package
-        run: dotnet nuget push ${{ inputs.nuget-package_output_directory }}/*.nupkg  --api-key ${{ secrets.NUGETAUTH }} --source "github" --skip-duplicate
+        run: dotnet nuget push ${{ inputs.nuget-package_output_directory }}/*.nupkg  --api-key ${{ secrets.nuget-auth }} --source "github" --skip-duplicate
       
     
        
