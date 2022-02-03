@@ -23,7 +23,26 @@ on:
         description: nuget registry source
         type: string
         required: false
+      
+      BLOB_STORAGE_ACCOUNT_NAME:
+        description: Blob storage name
+        type: string
+        required: false
         
+      cdn-profile-name:
+        description: CDN Profile name
+        type: string
+        required: false
+        
+      cdn-name:
+        description: CDN name
+        type: string
+        required: false
+        
+      resource-group:
+        description: Azure resource group
+        type: string
+        required: false
     secrets:
       nuget-auth:
         description: GitHub PAT token
@@ -32,6 +51,11 @@ on:
       nuget-username:
         description: GitHub username
         required: false
+      
+      AZURE_CREDENTIALS:
+        description: Blob storagecredentials
+        required: false
+      
 
 jobs:
   build-solution:
@@ -68,3 +92,43 @@ jobs:
         with:
           name: webapp
           path: ${{ inputs.project-folder }}/wwwroot
+
+  deploy_build:
+     # Only deploy code from master
+      if: (github.event_name != 'pull_request')
+      name: Deploy
+      needs: build-solution
+      runs-on: ubuntu-latest
+      steps:
+
+    # Download artifacts
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: webapp
+
+    # Authentication
+      - name: Authenticate with Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS  }}
+
+    # Deploy to storage using CLI
+      - name: Deploy to storage using CLI
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage blob upload-batch --account-name ${{ inputs.BLOB_STORAGE_ACCOUNT_NAME }} -s . -d \$web
+   # Purge old assets in Azure CDN
+      - name: Purge old assets in Azure CDN
+        uses: azure/CLI@v1
+        with:
+         azcliversion: 2.0.72
+         inlineScript: |
+            az cdn endpoint purge --content-paths  "/*" --profile-name ${{ inputs.cdn-profile-name }} --name ${{ inputs.cdn-name }} --resource-group ${{ inputs.resource-group }}
+   # Azure logout
+      - name: logout
+        working-directory: .
+        run: |
+          az logout
