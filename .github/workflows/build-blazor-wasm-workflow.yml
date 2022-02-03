@@ -61,10 +61,10 @@ jobs:
         run: dotnet test --no-build --verbosity normal
         
       - name: Publish
-        run: dotnet publish --configuration Release -o /published_app 
+        run: dotnet publish --configuration Release --no-build
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: webapp
-          path: ${{ inputs.project-folder }}/published_app/wwwroot
+          path: ${{ inputs.project-folder }}/wwwroot
