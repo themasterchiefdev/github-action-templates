@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: webapp
-          path: ${{ inputs.project-folder }}/wwwroot
+          path: ${{ inputs.project-folder }}/bin/Release/net6.0/wwwroot
 
   deploy_build:
      # Only deploy code from master
