@@ -1,4 +1,4 @@
-name: Build & Test dotnet application
+name: Build & Publish Blazor WASM application
 
 on:
   workflow_call:
