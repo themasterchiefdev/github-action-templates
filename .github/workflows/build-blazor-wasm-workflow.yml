@@ -61,7 +61,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal
         
       - name: Publish
-        run: dotnet publish --configuration Release -o ./published_app --no-build
+        run: dotnet publish --configuration Release 
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
