@@ -119,12 +119,11 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ inputs.BLOB_STORAGE_ACCOUNT_NAME }} -s . -d \$web
+            az storage blob upload-batch --account-name ${{ inputs.BLOB_STORAGE_ACCOUNT_NAME }} --auth-mode key -s . -d '$web'
    # Purge old assets in Azure CDN
       - name: Purge old assets in Azure CDN
         uses: azure/CLI@v1
         with:
-         azcliversion: 2.0.72
          inlineScript: |
             az cdn endpoint purge --content-paths  "/*" --profile-name ${{ inputs.cdn-profile-name }} --name ${{ inputs.cdn-name }} --resource-group ${{ inputs.resource-group }}
    # Azure logout
@@ -132,3 +131,4 @@ jobs:
         working-directory: .
         run: |
           az logout
+        if: always()
